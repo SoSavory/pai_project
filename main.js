@@ -110,7 +110,6 @@ function buildContents(tree, target, childProcess=false){
 
     // clear target. oh you don't want to have to write out creating elements? boo hoo, make more methods and get better at writing trees. caching could happen here
     if(!childProcess){
-        console.log(target);
         clearContainer(target);
     }
     
@@ -155,9 +154,8 @@ function buildContents(tree, target, childProcess=false){
     }
 
     while(contents.length > 0){
+      
         const element = contents.pop();
-        console.log("Attaching");
-        console.log(element, target);
         target.appendChild(element);
     }
     
@@ -179,13 +177,13 @@ class Wizard{
         this.graph = new WizardGraph(decisionTreePrototype, [], "start");
     }
     listEdges(node_id){
-        return JSON.parse(JSON.stringify(this.graph.decision_tree[node_id].edges));
+        // I just want to be clear that this should never modify an edge
+        const rawEdges = JSON.parse(JSON.stringify(this.graph.decision_tree[node_id].edges));
+        const honedEdges = rawEdges.map((re) => ({...re, from: String(node_id)}));
+        return honedEdges;
     }
     traverseEdge(edge){
         const to_node = this.graph.decision_tree[edge.to];
-        // update path history
-        this.graph.path.push(edge);
-
         if(to_node.is_pai){
             this.isPAI();
             return "pai";
@@ -195,73 +193,79 @@ class Wizard{
         }
 
         // update prompt
-        const prompt = this.graph.decision_tree[edge.to].prompt;
-        const prompt_container = {"prompt-container": {textStart: "Prompt: " + prompt}};
-        
+        const newPrompt = to_node.prompt; 
         // update answers
-        const new_edges = this.listEdges(edge.to);
-        var edges_html = new Array(new_edges.length);
-        
-        // root node for  ew answers
-        const answers_html_base = {"answer-container": {type: "ul", children: edges_html}};
-        // loop through edges and generate html nodes 
-        while(new_edges.length > 0){
-            const a = new_edges.pop();
-            var new_edge_html = {};
-            const new_edge_html_id = "edge-container-" + String(a.to) + "_" + String(new_edges.length);
+        const newAnswers = this.listEdges(edge.to);
 
-            new_edge_html[new_edge_html_id] = {
-                type: "li", 
-                textStart: a.label,
-                dataList: [{key: "from_node", value: edge.to}, {key: "to_node", value: a.to}],
-                classList: ["clickable-edge"],
-                onClick: document.wizard.clickTraverseEdge,
-            };
-            answers_html_base["answer-container"].children[new_edges.length] = new_edge_html;
-        }        
         buildContents(
             [
-                answers_html_base,
-                prompt_container,
+                this.domStubActivities(newPrompt, newAnswers),
                 {"path-container": {}},
-                this.returnStartOverButton(),
+                this.domStubStartOverButton(),
             ],
-            document.getElementById("wizard-container"));
-        // update prompt container to reflect that of the edge's destination node
+            document.getElementById(this.root_dom_id));
         return "traverse edge";
     }
     isPAI(){
-        clearContainer(document.getElementById(this.root_dom_id));
         buildContents([
             {"end-state": {type: "h3", textStart: "The Activity as Described is PAI compliant"}},
-            this.returnStartOverButton()
-        ], document.getElementById(this.root_dom_id));
+        ], document.getElementById("activity-container"));
     }
     isNotPAI(){
-        clearContainer(document.getElementById(this.root_dom_id));
         buildContents([
             {"end-state": {type: "h3", textStart: "The Activity as Described is NOT PAI compliant"}},
-            this.returnStartOverButton()
-        ], document.getElementById(this.root_dom_id));
+        ], document.getElementById("activity-container"));
     }
     clickTraverseEdge(e){
-        document.wizard.traverseEdge({to: e.target.dataset.to_node, label: "label"});
+        document.wizard.traverseEdge({to: e.target.dataset.to_node, label: e.target.dataset.label});
     }
     clickStartOver(e){
         document.wizard.start();
     }
-    returnStartOverButton(){
+
+    domStubStartOverButton(){
         return new Object( 
             {"start-over-button": {type: "button", textStart: "Start Over", onClick: document.wizard.clickStartOver}}
+        );
+    }
+    domStubPrompt(promptText){
+        return new Object({"prompt-container": {textStart: "Prompt: " + promptText}});
+    }
+    domStubAnswers(edges){
+        var edges_html = new Array(edges.length);
+        // root node for answers
+        const answers_html_base = {"answer-container": {type: "ul", children: edges_html}};
+        // loop through edges and generate html nodes 
+        while(edges.length > 0){
+            const a = edges.pop();
+            var edge_html = {};
+            const edge_html_id = "edge-container-" + String(a.to) + "_" + String(edges.length);
+
+            edge_html[edge_html_id] = {
+                type: "li", 
+                textStart: a.label,
+                dataList: [{key: "from_node", value: a.from}, {key: "to_node", value: a.to}, {key: "label", value: a.label}],
+                classList: ["clickable-edge"],
+                onClick: document.wizard.clickTraverseEdge,
+            };
+            answers_html_base["answer-container"].children[edges.length] = edge_html;
+        }        
+        return answers_html_base;
+    }
+    domStubActivities(promptData, answerData){
+        const promptContents = this.domStubPrompt(promptData);
+        const answerContents = this.domStubAnswers(answerData);
+        
+        return new Object(
+            {"activity-container": {children: [answerContents, promptContents]}}
         );
     }
     initialize(){
         buildContents(
             [
-                {"prompt-container": {}},
-                {"answer-container": {type: "ul"}},
+                this.domStubActivities("", []),
                 {"path-container": {}},
-                this.returnStartOverButton(),
+                this.domStubStartOverButton(),
             ],
             document.getElementById(this.root_dom_id)
         );
@@ -269,8 +273,7 @@ class Wizard{
     start(){
         document.wizard = this;
         document.wizard.initialize();
-        document.wizard.traverseEdge({to: document.wizard.graph.root_node_id, label: ""});
-        console.log("wizard started");
+        document.wizard.traverseEdge({from: "", to: document.wizard.graph.root_node_id, label: ""});
     }
 }
 
