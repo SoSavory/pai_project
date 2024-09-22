@@ -1,27 +1,49 @@
 header{
     border-bottom: 1px dotted black;
+    margin-bottom: 0.5em;
 }
 button{
     cursor: pointer;
 }
+
 div#wizard-container{
-    margin: 1em;
-    padding: 1em;
     border: 1px solid black;
+    background-color: rgb(234,234,234);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 90%;
+}
+
+div#wizard-container div#wizard-left{
+    width: 50%;
+    flex-grow: 1;
+    margin: 1em;
+}
+
+div#wizard-container div#wizard-right{
+    width: 50%;
+    flex-grow: 1;
+    margin: 1em;
+    overflow-y:scroll;
 }
 div#wizard-container div#prompt-container{
-    padding: 0.5em 0;
-    text-align: center;
+    text-align: left;
     text-decoration: underline;
 }
-div#wizard-container ul#answer-container{
+div#wizard-container #activity-container{
+    background-color: white;
+    padding: 1em;
+    height: 90%;
+}
+div#wizard-container #activity-container ul#answer-container{
     text-decoration: none;
 }
 ul#answer-container li{
-    list-style: none;
-    text-align: center;
+    text-align: left;
     cursor: pointer;
-    padding: 0.3em 0;
+    text-indent: 0;
+    padding: 0.3em;
 }
 ul#answer-container li:hover{
     background-color: rgb(222,222,222);
@@ -29,4 +51,21 @@ ul#answer-container li:hover{
 }
 h3#end-state{
     text-align: center;
+}
+
+table#paths-container{
+    border: 1px solid black;
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+
+table#paths-container tr{
+    border: 1px solid black;
+}
+table#paths-container tr th{
+    border: 1px solid black;
+}
+table#paths-container tr td{
+    border: 1px solid black;
 }
