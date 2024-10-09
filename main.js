@@ -31,6 +31,21 @@ const decisionTreePrototype = {
             {to: "B", label: "Recruiting future partnership"},
             {to: "C", label: "Developing plans and work for future pro bono work"},
             {to: "D", label: "Internship recruitment/training/supervision"},
+            {to: "E", label: "Bar association engagement and partnership"},
+            {to: "A", label: "Individual case referral"},
+            {to: "B", label: "Recruiting future partnership"},
+            {to: "C", label: "Developing plans and work for future pro bono work"},
+            {to: "D", label: "Internship recruitment/training/supervision"},
+            {to: "E", label: "Bar association engagement and partnership"},
+            {to: "A", label: "Individual case referral"},
+            {to: "B", label: "Recruiting future partnership"},
+            {to: "C", label: "Developing plans and work for future pro bono work"},
+            {to: "D", label: "Internship recruitment/training/supervision"},
+            {to: "E", label: "Bar association engagement and partnership"},
+            {to: "A", label: "Individual case referral"},
+            {to: "B", label: "Recruiting future partnership"},
+            {to: "C", label: "Developing plans and work for future pro bono work"},
+            {to: "D", label: "Internship recruitment/training/supervision"},
             {to: "E", label: "Bar association engagement and partnership"}
         ]
     },
@@ -92,6 +107,7 @@ class Wizard{
     constructor(rootDOMId="wizard-container"){
         this.root_dom_id = rootDOMId;
         this.graph = new WizardGraph(decisionTreePrototype, [], "start");
+        this.htmlCache = new DOMStubTree({});
     }
     listEdges(node_id){
         const node = this.graph.decision_tree[node_id];
@@ -109,7 +125,7 @@ class Wizard{
     listPath(){
         return JSON.parse(JSON.stringify(this.graph.path));
     }
-    // argument edge is a plain object shaped as such: {from: node_id, to: node_id, label: ""}
+    // argument edge is a GraphEdge
     // this is the event which signals an update to state/position, as we move from our current position along the specified edge, 
     // where position will update to be that specified by the argument edge.to
     traverseEdge(edge){
@@ -118,7 +134,7 @@ class Wizard{
         // the object which will store which gui elements we want to create and attach
         var left_contents = [];
         var right_contents = [];
-        // check if we have arrived at an end state, and if so, trigger it.
+        // check if we have arrived at an end state, and if so, trigger it. Otherwise, default behavior
         if(to_node.is_pai){
             left_contents.push(this.domStubIsPAI());
         } else if(to_node.is_not_pai){      
@@ -129,13 +145,17 @@ class Wizard{
 
         right_contents.push(this.domStubStartOverButton());
 
+        // if()
+        // right_contents.push(this.domStubBackButton());
+
         // update our path
         this.graph.path.push(edge);
         right_contents.push(this.domStubPath(this.listPath())); 
 
-        const w = this.domStubWizard(left_contents, right_contents);
         // rebuild the html/gui to reflect the new prompt and answers for our destination node
+        const w = this.domStubWizard(left_contents, right_contents);
         buildContents(w, document.body);
+
         return "traverse edge";
     }
     // =================================================================================================
@@ -153,29 +173,35 @@ class Wizard{
     clickStartOver(e){
         document.wizard.start();
     }
+    clickBack(e){
+        document.wizard.goBack();
+    }
     // =================================================================================================
     // domStub helper methods- 
     // they return the domStubs (passed to buildContents), which contain the data necessary to build/update fragments of our html.
     // =================================================================================================
     // end state method
     domStubIsPAI(){
-        return new domStubTree({html_id: "end-state", type: "h3", textStart: "The Activity as Described is PAI compliant"});
+        return new DOMStubTree({html_id: "end-state", type: "h3", textStart: "The Activity as Described is PAI compliant"});
     }
     // end state method
     domStubIsNotPAI(){
-        return new domStubTree({html_id: "end-state", type: "h3", textStart: "The Activity as Described is NOT PAI compliant"});
+        return new DOMStubTree({html_id: "end-state", type: "h3", textStart: "The Activity as Described is NOT PAI compliant"});
     }
     domStubStartOverButton(){
-        return new domStubTree({html_id: "start-over-button", type: "button", textStart: "Start Over", onClick: document.wizard.clickStartOver});
+        return new DOMStubTree({html_id: "start-over-button", type: "button", textStart: "Start Over", onClick: document.wizard.clickStartOver});
+    }
+    domStubBackButton(){
+        return new DOMStubTree({html_id: "back-button", type: "button", textStart: "Back", onClick: document.wizard.clickBack});
     }
     domStubPrompt(promptText){
-        return new domStubTree({html_id: "prompt-container", textStart: "Prompt: " + promptText});
+        return new DOMStubTree({html_id: "prompt-container", textStart: "Prompt: " + promptText});
     }
     // argument edges is an array of GraphEdges.
     domStubAnswers(edges){
         var edges_html = new Array(edges.length);
         // root node for answers
-        const answers_html_base = new domStubTree({html_id: "answer-container", type: "ul", children: edges_html});
+        const answers_html_base = new DOMStubTree({html_id: "answer-container", type: "ul", children: edges_html});
         // loop through edges and generate html nodes.
         // each iteration depletes the main argument edges, think of it as a queue. 
         while(edges.length > 0){
@@ -203,15 +229,15 @@ class Wizard{
     domStubActivities(promptData, answerData){
         const promptContents = this.domStubPrompt(promptData);
         const answerContents = this.domStubAnswers(answerData);
-        return new domStubTree({html_id: "activity-container", children: [promptContents, answerContents]});
+        return new DOMStubTree({html_id: "activity-container", children: [promptContents, answerContents]});
     }
     domStubPath(path){
         var steps_html = new Array(path.length+1);
-        steps_html[0] = new domStubTree({html_id: "paths-container-header-row", type: "tr", children: [
-            new domStubTree({type: "th", textStart: "Prompt"}), new domStubTree({type: "th", textStart: "Answer"})
+        steps_html[0] = new DOMStubTree({html_id: "paths-container-header-row", type: "tr", children: [
+            new DOMStubTree({type: "th", textStart: "Prompt"}), new DOMStubTree({type: "th", textStart: "Answer"})
         ]});
         // root node for answers
-        const steps_html_base = new domStubTree({html_id: "paths-container", type: "table", children: steps_html});
+        const steps_html_base = new DOMStubTree({html_id: "paths-container", type: "table", children: steps_html});
         // loop through edges and generate html nodes.
         // each iteration depletes the main argument edges, think of it as a queue. 
         while(path.length > 0){
@@ -219,12 +245,12 @@ class Wizard{
             const a = path.pop();
             // use the length of the depleting edges array to create unique ids for our dom stub child nodes
             const step_html = {
-                html_id: "step-container-" + String(a.to) + "-" + String(a.from) + "_" + String(path.length),
+                html_id: "step-container-" + String(a.to) + "-" + String(a.from) + "_" + String(path.length - 1),
                 type: "tr", 
                 classList: ["path-table-step"],
                 children: [
-                    new domStubTree({type: "td", textStart: String(a.prompt)}),
-                    new domStubTree({type: "td", textStart: String(a.label)})
+                    new DOMStubTree({type: "td", textStart: String(a.prompt)}),
+                    new DOMStubTree({type: "td", textStart: String(a.label)})
                 ]
             };
             steps_html[path.length+1] = step_html;
@@ -233,15 +259,21 @@ class Wizard{
     }
     domStubWizard(left_contents, right_contents){
         var wizard_html_base = [
-            new domStubTree({type: "header", textStart: "Welcome to the PAI Innovation Team Demo"}),
-            new domStubTree({html_id: "wizard-container", children: 
+            new DOMStubTree({type: "header", textStart: "Welcome to the PAI Innovation Team Demo"}),
+            new DOMStubTree({html_id: "wizard-container", children: 
                 [
-                    new domStubTree({type: "div", html_id: "wizard-left", classList: ["left"], children: left_contents}),
-                    new domStubTree({type: "div", html_id: "wizard-right", classList: ["right"], children: right_contents})
+                    new DOMStubTree({type: "div", html_id: "wizard-left", classList: ["left"], children: left_contents}),
+                    new DOMStubTree({type: "div", html_id: "wizard-right", classList: ["right"], children: right_contents})
                 ]
             })
         ];
         return wizard_html_base;
+    }
+    goBack(){
+        document.wizard.graph.path.pop();
+        for( const edge of document.wizard.graph.path){
+            document.wizard.traverseEdge(edge);
+        }
     }
     // =============================================================================================
     // starter
@@ -291,7 +323,7 @@ class GraphEdge{
     }
 }
 
-class domStubTree{
+class DOMStubTree{
     constructor(obj){
         if(obj.html_id){
             this.html_id = String(obj.html_id);
@@ -331,7 +363,7 @@ function clearContainer(containerReference){
     return containerReference;
 }
 
-// recursively builds out a gui from an array of domStubTree objects.
+// recursively builds out a gui from an array of DOMStubTree objects.
 // appends html into target dom reference
 function buildContents(tree, target, childProcess=false){
 

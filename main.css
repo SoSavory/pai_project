@@ -1,6 +1,10 @@
+html{
+    max-height: 100%;
+    overflow-y:unset;
+}
+
 header{
-    border-bottom: 1px dotted black;
-    margin-bottom: 0.5em;
+    border-bottom: 2% dotted black;
 }
 button{
     cursor: pointer;
@@ -16,25 +20,32 @@ div#wizard-container{
 }
 
 div#wizard-container div#wizard-left{
+    overflow: hidden;
     width: 50%;
-    flex-grow: 1;
-    margin: 1em;
+    padding: 0.5em;
 }
 
 div#wizard-container div#wizard-right{
+    overflow: scroll;
     width: 50%;
-    flex-grow: 1;
-    margin: 1em;
-    overflow-y:scroll;
+    padding: 0.5em;
+
 }
+
+div#wizard-container div#activity-container{
+    max-height: 100%;
+    overflow-y: scroll;
+}
+
 div#wizard-container div#prompt-container{
     text-align: left;
     text-decoration: underline;
+    padding: .1em;
 }
 div#wizard-container #activity-container{
     background-color: white;
-    padding: 1em;
-    height: 90%;
+
+    height: 100%;
 }
 div#wizard-container #activity-container ul#answer-container{
     text-decoration: none;
@@ -58,6 +69,7 @@ table#paths-container{
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
+    overflow: scroll;
 }
 
 table#paths-container tr{
