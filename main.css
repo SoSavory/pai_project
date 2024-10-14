@@ -69,7 +69,7 @@ table#paths-container{
     border-collapse: collapse;
     border-spacing: 0;
     width: 100%;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 
 table#paths-container tr{

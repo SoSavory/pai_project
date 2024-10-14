@@ -24,76 +24,159 @@ const decisionTreeTestPrototype = {
     "2": {is_not_pai: true}
 };
 
+// const decisionTreePrototype = {
+//     "start": {prompt: "What are you working on?",
+//         edges: [
+//             {to: "A", label: "Individual case referral"},
+//             {to: "B", label: "Recruiting future partnership"},
+//             {to: "C", label: "Developing plans and work for future pro bono work"},
+//             {to: "D", label: "Internship recruitment/training/supervision"},
+//             {to: "E", label: "Bar association engagement and partnership"},
+//             {to: "A", label: "Individual case referral"},
+//             {to: "B", label: "Recruiting future partnership"},
+//             {to: "C", label: "Developing plans and work for future pro bono work"},
+//             {to: "D", label: "Internship recruitment/training/supervision"},
+//             {to: "E", label: "Bar association engagement and partnership"},
+//             {to: "A", label: "Individual case referral"},
+//             {to: "B", label: "Recruiting future partnership"},
+//             {to: "C", label: "Developing plans and work for future pro bono work"},
+//             {to: "D", label: "Internship recruitment/training/supervision"},
+//             {to: "E", label: "Bar association engagement and partnership"},
+//             {to: "A", label: "Individual case referral"},
+//             {to: "B", label: "Recruiting future partnership"},
+//             {to: "C", label: "Developing plans and work for future pro bono work"},
+//             {to: "D", label: "Internship recruitment/training/supervision"},
+//             {to: "E", label: "Bar association engagement and partnership"}
+//         ]
+//     },
+//     "A": {prompt: "Population Engaged- Are you working with a private attorney or to support private attorney engagement?", 
+//         edges: [
+//             {to: "A.1", label: "Yes"},
+//             {to: "A.2", label: "No"},
+//         ]
+//     },
+//     "A.1": {prompt: "Was this a recent graduate or fellow working at LANC?", 
+//         edges: [
+//             {to: "B", label: "No"},
+//             {to: "E", label: "Yes"}
+//         ]
+//     },
+//     "A.2": {prompt: "Are you working with a student or to support student engagement?",
+//         edges: [
+//             {to: "A.2.1", label: "Yes"},
+//             {to: "A.2.2", label: "No"}
+//         ]
+//     },
+//     "A.2.1": {prompt: "What kind of student?",
+//         edges: [
+//             {to: "C", label: "Law Student"},
+//             {to: "is_not_pai", label: "High School or College Student"}
+//         ]
+//     },
+//     "A.2.2": {prompt: "Are you working with a paralegal or other legal professional?", 
+//         edges: [
+//             {to: "D", label: "Yes"},
+//             {to: "A.3", label: "No"}
+//         ]
+//     },
+//     "A.3": {prompt: "Are you working with a non-lawyer professional?", 
+//         edges: [
+//             {to: "E", label: "Yes"},
+//             {to: "is_not_pai", label: "No"}
+//         ]
+//     },
+//     "B": {prompt: "Private Attorneys- Is this about a case (versus general work with a bar association or firm?", 
+//         edges: [
+//             {to: "is_pai", label: "Yes"},
+//             {to: "is_not_pai", label: "No"}
+//         ]
+//     },
+//     "C": {prompt: "C. Law Students", edges: [{to: "is_not_pai", label: "Placeholder"}]},
+//     "D": {prompt: "D. Paralegals", edges: [{to: "is_not_pai", label: "Placeholder"}]},
+//     "E": {prompt: "E. Fellows and Law Graduates", edges: [{to: "is_pai", label: "Placeholder"}]},
+//     "is_pai": {is_pai: true},
+//     "is_not_pai": {is_not_pai: true}
+// }
+
 const decisionTreePrototype = {
-    "start": {prompt: "What are you working on?",
+    "start": {
+        prompt: "What are you working on?", 
         edges: [
-            {to: "A", label: "Individual case referral"},
-            {to: "B", label: "Recruiting future partnership"},
+            {to: "A", label: "Individual case referral, case support, research project, etc."},
+            {to: "B", label: "Recruiting future partnerships"},
             {to: "C", label: "Developing plans and work for future pro bono work"},
             {to: "D", label: "Internship recruitment/training/supervision"},
-            {to: "E", label: "Bar association engagement and partnership"},
-            {to: "A", label: "Individual case referral"},
-            {to: "B", label: "Recruiting future partnership"},
-            {to: "C", label: "Developing plans and work for future pro bono work"},
-            {to: "D", label: "Internship recruitment/training/supervision"},
-            {to: "E", label: "Bar association engagement and partnership"},
-            {to: "A", label: "Individual case referral"},
-            {to: "B", label: "Recruiting future partnership"},
-            {to: "C", label: "Developing plans and work for future pro bono work"},
-            {to: "D", label: "Internship recruitment/training/supervision"},
-            {to: "E", label: "Bar association engagement and partnership"},
-            {to: "A", label: "Individual case referral"},
-            {to: "B", label: "Recruiting future partnership"},
-            {to: "C", label: "Developing plans and work for future pro bono work"},
-            {to: "D", label: "Internship recruitment/training/supervision"},
-            {to: "E", label: "Bar association engagement and partnership"}
+            {to: "E", label: "Bar association, community, and LAC engagement"},
+            {to: "F", label: "Training"}
         ]
     },
-    "A": {prompt: "Population Engaged- Are you working with a private attorney or to support private attorney engagement?", 
+    "A": {
+        prompt: "Who will be working on the case or project?",
         edges: [
-            {to: "A.1", label: "Yes"},
-            {to: "A.2", label: "No"},
+            {to: "A.a", label: "Private attorney"},
+            {to: "A.b", label: "Unlicensed law school graduate"},
+            {to: "A.c", label: "Recent Grad Fellow"},
+            {to: "A.d", label: "Paralegal"},
+            {to: "A.e", label: "Law student/intern/extern"},
+            {to: "is_not_pai", label: "Community member"},
+            {to: "is_not_pai", label: "College Student"},
+            {to: "A.h", label: "Non-lawyer professional"}
         ]
     },
-    "A.1": {prompt: "Was this a recent graduate or fellow working at LANC?", 
+    "A.a": {
+        prompt: "Are you...", 
         edges: [
-            {to: "B", label: "No"},
-            {to: "E", label: "Yes"}
+            {to: "is_pai", label: "Brainstorming ideas for referrals or working on a plan to ge private attorneys involved?"},
+            {to: "is_pai", label: "Referring a case or project to a private attorney?"},
+            {to: "is_pai", label: "Providing support to volunteer working on case (Answering questions, mentoring, etc)?"},
+            {to: "is_pai", label: "Doing case management? (Gathering documents, managing the file, prparing for closing, rejecting case where client withdrew, or closing file)?"},
+            {to: "A.a.5", label: "Providing legal assistance when a private attorney didn't complete representation?"},
+            {to: "A.a.6", label: "Co-counseling or seeking advice from a private attorney?"},
+            {to: "is_not_pai", label: "Providing advice or a private attorney about a non-LANC case?"},
+            {to: "A.a.8", label: "Working on contract matters?"}
         ]
     },
-    "A.2": {prompt: "Are you working with a student or to support student engagement?",
+    "A.a.5": {
+        prompt: "Is this task current or preexisting?", 
+        edges: [{to: "is_pai", label: "Preexisting"}, {to: "is_not_pai", label: "Current"}]
+    },
+    "A.a.6": {
+        prompt: "Are you...",
         edges: [
-            {to: "A.2.1", label: "Yes"},
-            {to: "A.2.2", label: "No"}
+            {to: "is_pai", label: "Actively engaged with the private attorney on this task? (Communication with attorney, work on shared tasks, meetings, and appearances where you are both present)?"},
+            {to: "is_not_pai", label: "Working on tasks not specifically shared with or engaging the private attorney?"},
+            {to: "is_pai", label: "Asking a private attorney for advice on a case?"}
         ]
     },
-    "A.2.1": {prompt: "What kind of student?",
-        edges: [
-            {to: "C", label: "Law Student"},
-            {to: "is_not_pai", label: "High School or College Student"}
-        ]
+    "A.a.8": {
+        prompt: "Are you working on recruitment, referral, tracking, mentoring, or closing?", 
+        edges: [{to: "is_pai", label: "yes"}, {to: "is_not_pai", label: "No"}]
     },
-    "A.2.2": {prompt: "Are you working with a paralegal or other legal professional?", 
-        edges: [
-            {to: "D", label: "Yes"},
-            {to: "A.3", label: "No"}
-        ]
+    "A.b": {
+        prompt: "Was this time spent recruiting, training, providing support, reviewing work, or providing feedback?",
+        edges: [{to: "is_pai", label: "yes"}, {to: "is_not_pai", label: "no"}]
     },
-    "A.3": {prompt: "Are you working with a non-lawyer professional?", 
-        edges: [
-            {to: "E", label: "Yes"},
-            {to: "is_not_pai", label: "No"}
-        ]
+    "A.c": {
+        prompt: "Is this person being paid (by LANC or any other entity) for this activity?",
+        edges: [{to: "is_pai", label: "No"}, {to: "is_not_pai", label: "Yes"}]
     },
-    "B": {prompt: "Private Attorneys- Is this about a case (versus general work with a bar association or firm?", 
-        edges: [
-            {to: "is_pai", label: "Yes"},
-            {to: "is_not_pai", label: "No"}
-        ]
+    "A.d": {
+        prompt: "Is this paralegal certified or do they have substantial legal experience?",
+        edges: [{to: "is_pai", label: "Yes"}, {to: "is_not_pai", label: "No"}]
     },
-    "C": {prompt: "C. Law Students", edges: [{to: "is_not_pai", label: "Placeholder"}]},
-    "D": {prompt: "D. Paralegals", edges: [{to: "is_not_pai", label: "Placeholder"}]},
-    "E": {prompt: "E. Fellows and Law Graduates", edges: [{to: "is_pai", label: "Placeholder"}]},
+    "A.e": {
+        prompt: "Were you recruiting, training, providing support, reviewing work, or providing feedback?",
+        edges: [{to: "is_pai", label: "Yes"}, {to: "is_not_pai", label: "No"}]
+    },
+    "A.h": {
+        prompt: "Does thie non-lawyer professional have an expertise in something?",
+        edges: [{to: "is_pai", label: "Yes"}, {to: "is_not_pai", label: "No"}]
+    },
+    "B": {prompt: "Placeholder- under construction"},
+    "C": {prompt: "Placeholder- under construction"},
+    "D": {prompt: "Placeholder- under construction"},
+    "E": {prompt: "Placeholder- under construction"},
+    "F": {prompt: "Placeholder- under construction"},
     "is_pai": {is_pai: true},
     "is_not_pai": {is_not_pai: true}
 }
